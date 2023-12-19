@@ -91,13 +91,16 @@
                             <h3 class="dz-title">{{ $blog_visibility }}{{ $blog->title }}</h3>
                             <p class="blog-excerpt fs-5">{{ optional($blog)->excerpt }}</p>
 
-                            {!! $blog->content !!}
 
                             @if(optional($blog->video)->value)
-                                <div>
-                                    <iframe width="420" height="345" src="{{ $blog->video->value }}"></iframe>
+                                <div class="container text-center">
+                                    <iframe width="600" height="450" src="{{ $blog->video->value }}" frameborder="0" allowfullscreen></iframe>
                                 </div>
                             @endif
+
+
+                            {!! $blog->content !!}
+
 
                             @if (optional($blog->child_pages)->isNotEmpty())
                                 <h4>Related Pages</h4>
@@ -190,3 +193,4 @@
     <!-- Blog Detail End -->
 
 @endsection
+

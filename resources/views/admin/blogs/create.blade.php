@@ -5,7 +5,7 @@
 @section('content')
 
 <div class="container-fluid">
-	<div hidden class="card accordion accordion-rounded-stylish accordion-bordered" id="accordion-slug">
+	<div class="card accordion accordion-rounded-stylish accordion-bordered" id="accordion-slug">
 		<div class="card-header justify-content-start accordion-header" data-bs-toggle="collapse" data-bs-target="#with-slug" aria-expanded="true">
 			<h4 class="card-title">{{ __('Screen Options') }}</h4>
 			<span class="accordion-header-indicator"></span>
