@@ -86,7 +86,7 @@
 
 
 
-                    {!! DzHelper::recenthomepages( array('limit'=>6, 'order'=>'asc', 'orderby'=>'created_at') ); !!}
+                    {!! DzHelper::recenthomeBlogs( array('limit'=>6, 'order'=>'asc', 'orderby'=>'created_at') ); !!}
 
                     {!! DzHelper::homeGalery( array('limit'=>10, 'order'=>'asc', 'orderby'=>'created_at') ); !!}
 
