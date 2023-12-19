@@ -77,7 +77,7 @@
                                     </div>
 
                                     <div class="clearfix wow fadeInUp" data-wow-delay="1.0s" style="visibility: visible; animation-delay: 1s; animation-name: fadeInUp;">
-                                        <a href="about-us.html" class="btn btn-skew btn-lg btn-primary shadow-primary"><span>Detail</span></a>
+                                        <a href="/public/tugas-fungsi" class="btn btn-skew btn-lg btn-primary shadow-primary"><span>Detail</span></a>
                                     </div>
                                 </div>
                             </div>
