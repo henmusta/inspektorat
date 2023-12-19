@@ -99,8 +99,6 @@
                     @endphp
                     @if(optional($page->feature_img)->value)
                         <img src="{{ asset('storage/'.$imagepath.'/'.$page->feature_img->value) }}" alt="{{ __('page Image') }}">
-                    @else
-                        <img src="{{ asset('images/noimage.jpg') }}" alt="{{ __('page Image') }}">
                     @endif
                 </div>
                 <hr>
