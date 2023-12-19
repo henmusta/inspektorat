@@ -52,7 +52,7 @@
             </div>
         </div>
     </div>
-
+{{--
     @if(!$rolesArr->isEmpty())
 
         <div class="row">
@@ -186,7 +186,7 @@
 
         </div>
 
-    @endif
+    @endif --}}
 
 </div>
 

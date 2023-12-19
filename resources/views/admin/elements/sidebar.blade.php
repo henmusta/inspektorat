@@ -178,7 +178,7 @@
                 </li>
             @endif
 
-            {{-- @canany(['Controllers > PermissionsController > index', 'Controllers > PermissionsController > roles_permissions', 'Controllers > PermissionsController > user_permissions', 'Controllers > PermissionsController > temp_permissions'])
+            @canany(['Controllers > PermissionsController > index', 'Controllers > PermissionsController > roles_permissions', 'Controllers > PermissionsController > user_permissions', 'Controllers > PermissionsController > temp_permissions'])
             <li>
                 <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
                     <i class="flaticon-035-shield"></i>
@@ -194,7 +194,7 @@
                     @endcan
                 </ul>
             </li>
-            @endcanany --}}
+            @endcanany
 
 
         </ul>
