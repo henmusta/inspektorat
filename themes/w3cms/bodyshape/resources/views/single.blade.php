@@ -129,14 +129,14 @@
                                         <li><a target="_blank" class="fab fa-linkedin" href="{{ config('Social.linkedin') }}"></a></li>
                                         <li><a target="_blank" class="fab fa-instagram" href="{{ config('Social.instagram') }}"></a></li>
                                     </ul>
-                                </div>                                  
+                                </div>
                             </div>
                         </div>
                     </div>
-                    @endif   
+                    @endif
                     @if(!empty($blogs))
                     <div class="widget-title">
-                        <h4 class="title">{{ __('Related Blog') }}</h4>
+                        <h4 class="title">Related Blog</h4>
                     </div>
                     <div class="row m-b30 m-sm-b10">
                         @forelse($blogs as $blog)

@@ -13,13 +13,14 @@ class Configuration extends Model
 	protected $table = 'configurations';
 	public $timestamps = false;
 	protected $fillable = [
-		'name',       
+		'name',
 		'value',
 		'title',
 		'input_type',
 		'description',
 		'params',
 		'editable',
+        'viewlable',
 		'order',
 		'weight'
 	];
@@ -35,7 +36,7 @@ class Configuration extends Model
 	}
 
 	public function getprefix(){
-		
+
 		$allprefix = array();
 		$allprefixarray = Configuration::pluck('name', 'id');
 		foreach($allprefixarray as $key => $value){
@@ -44,7 +45,7 @@ class Configuration extends Model
 				$allprefix[] = str_replace('_',' ',$keyE['0']);
 			 }
 		}
-		
+
 		return $allprefix;
 
 	}
@@ -59,7 +60,7 @@ class Configuration extends Model
 	public function moveUp($id, $step) {
 
 		$currentPosition = Configuration::select('id', 'order')->findorFail($id);
-		
+
 		if($currentPosition->id > 1)
 		{
 			$limit = $step;
@@ -70,7 +71,7 @@ class Configuration extends Model
 								->limit($limit)
 								->get()->toArray();
 
-			
+
 			$lastArray = end($changePosition);
 			$currentPositionRes = Configuration::where('id', '=', $currentPosition->id)
 								->update(['order'=> $lastArray['order']]);
@@ -90,7 +91,7 @@ class Configuration extends Model
 	public function moveDown($id, $step) {
 		$currentPosition = Configuration::select('id', 'order')->findorFail($id);
 		$maxOrder = Configuration::max('order');
-		
+
 		if($currentPosition->order < $maxOrder)
 		{
 			$limit = $step;
@@ -109,7 +110,7 @@ class Configuration extends Model
 
 			$changePositionRes = Configuration::where('id', '=', $changePositionId)
 								->update(['order'=>$currentPosition->order]);
-			
+
 			return true;
 		}
 		else

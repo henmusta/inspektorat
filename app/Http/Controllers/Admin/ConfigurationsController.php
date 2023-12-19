@@ -14,14 +14,14 @@ class ConfigurationsController extends Controller
 
         $configurations = Configuration::select('id', 'name', 'value')->orderBy('order')->paginate(config('Reading.nodes_per_page'));
         return view('admin.configurations.admin_index', compact('configurations', 'page_title'));
-        
+
     }
-    
-    public function admin_prefix(Request $request, $prefix = NULL) { 
+
+    public function admin_prefix(Request $request, $prefix = NULL) {
         $page_title = __('Configuration');
 
         if($request->isMethod('post')) {
-        
+
             if($request->has('Configuration')) {
                 $newArr = array();
                 $fileNameArr = $this->__imageSave($request);
@@ -33,13 +33,13 @@ class ConfigurationsController extends Controller
                     } else if(isset($config_value['value'])) {
                         $config_value['value'] = $config_value['value'];
                     }
-                    if(array_key_exists($key, $fileNameArr)) 
+                    if(array_key_exists($key, $fileNameArr))
                     {
                         $config_value['value'] = $fileNameArr[$key];
                     }
                     $res = Configuration::where('id', '=', $key)->update($config_value);
                 }
-                return redirect()->back()->with('success', __('Configuration updated successfully'));  
+                return redirect()->back()->with('success', __('Configuration updated successfully'));
             } else
             {
                 return redirect()->back()->with('error', __('There are some problem in form submition.'));
@@ -56,10 +56,10 @@ class ConfigurationsController extends Controller
                                 'PostName'          => '/%slug%/',
                                 'CustomeStructure'  => 'custom',
                             );
-                $configuration = Configuration::select('id', 'name', 'value', 'title', 'description', 'input_type', 'editable', 'weight', 'params')->where('name', 'LIKE', $prefix.'%')->first();
+                $configuration = Configuration::select('id', 'name', 'value', 'title', 'description', 'input_type', 'editable', 'viewlable', 'weight', 'params')->where('name', 'LIKE', $prefix.'%')->first();
                 return view('admin.configurations.admin_permalink_prefix', compact('configuration', 'prefix', 'routesType','page_title'));
             }
-            $configurations = Configuration::select('id', 'name', 'value', 'title', 'description', 'input_type', 'editable', 'weight', 'params')->where('name', 'LIKE', $prefix.'%')->get();
+            $configurations = Configuration::select('id', 'name', 'value', 'title', 'description', 'input_type', 'editable', 'viewlable','weight', 'params')->where('name', 'LIKE', $prefix.'%')->get();
             return view('admin.configurations.admin_prefix', compact('configurations', 'prefix','page_title'));
         }
 
@@ -71,8 +71,8 @@ class ConfigurationsController extends Controller
         return view('admin.configurations.admin_view', compact('configuration'));
     }
 
-    public function admin_add(Request $request){       
-        if($request->isMethod('post')) { 
+    public function admin_add(Request $request){
+        if($request->isMethod('post')) {
 
             $validation = $this->validate($request, [
                     'Configuration.name' => 'required|unique:configurations,name',
@@ -88,12 +88,12 @@ class ConfigurationsController extends Controller
                 'params'            => $request->input('Configuration.params') ? $request->input('Configuration.params') : '',
                 'editable'          => $request->input('Configuration.editable') ? 1 : 0,
             ];
-            
+
             $res = Configuration::create($new_configuration);
 
             if($res)
             {
-                return redirect()->route('admin.configurations.admin_index')->with('success', __('Configuration added successfully'));  
+                return redirect()->route('admin.configurations.admin_index')->with('success', __('Configuration added successfully'));
             } else
             {
                 return redirect()->route('admin.configurations.admin_index')->with('error', __('There are some problem in form submition.'));
@@ -122,12 +122,12 @@ class ConfigurationsController extends Controller
                 'params'                => $request->input('Configuration.params'),
                 'editable'              => $request->input('Configuration.editable') ? 1 : 0,
             ];
-            
+
             $res = Configuration::where('id', '=', $id)->update($edit_configuration);
 
             if($res)
             {
-                return redirect()->route('admin.configurations.admin_index')->with('success', __('Configuration updated successfully'));  
+                return redirect()->route('admin.configurations.admin_index')->with('success', __('Configuration updated successfully'));
             } else
             {
                 return redirect()->route('admin.configurations.admin_index')->with('error', __('There are some problem in form submition.'));
@@ -144,7 +144,7 @@ class ConfigurationsController extends Controller
 
         if($res)
         {
-            return redirect()->route('admin.configurations.admin_index')->with('success', __('Configuration deleted successfully'));  
+            return redirect()->route('admin.configurations.admin_index')->with('success', __('Configuration deleted successfully'));
         } else
         {
             return redirect()->route('admin.configurations.admin_index')->with('error', __('There are some problem.'));
@@ -159,15 +159,15 @@ class ConfigurationsController extends Controller
      * @return void
      * @access public
      */
-    public function admin_moveup($id, $step = 1) 
+    public function admin_moveup($id, $step = 1)
     {
         $configuration = new Configuration();
         $res = $configuration->moveUp($id, $step);
-        if($res) 
+        if($res)
         {
             return redirect()->back()->with('success', __('Moved up successfully.'));
-        } 
-        else 
+        }
+        else
         {
             return redirect()->back()->with('success', __('Could not move up.'));
         }
@@ -181,15 +181,15 @@ class ConfigurationsController extends Controller
      * @return void
      * @access public
      */
-    public function admin_movedown($id, $step = 1) 
+    public function admin_movedown($id, $step = 1)
     {
         $configuration = new Configuration();
         $res = $configuration->moveDown($id, $step);
-        if($res) 
+        if($res)
         {
             return redirect()->back()->with('success', __('Moved down successfully.'));
-        } 
-        else 
+        }
+        else
         {
             return redirect()->back()->with('success', __('Could not move down.'));
         }
@@ -207,7 +207,7 @@ class ConfigurationsController extends Controller
         {
             return $fileNameArr;
         }
-        foreach($request->file('Configuration') as $imgKey => $imgValue) 
+        foreach($request->file('Configuration') as $imgKey => $imgValue)
         {
             if (is_array($imgValue['value'])) {
 
@@ -223,7 +223,7 @@ class ConfigurationsController extends Controller
 
                 $fileName = time().'.'.$imgValue['value']->getClientOriginalName();
                 $imgValue['value']->storeAs('public/configuration-images', $fileName);
-                
+
             }
                 $fileNameArr[$imgKey] = $fileName;
         }
@@ -241,7 +241,7 @@ class ConfigurationsController extends Controller
 
         if($configuration)
         {
-            return redirect()->back()->with('success', __('Configuration updated successfully.'));  
+            return redirect()->back()->with('success', __('Configuration updated successfully.'));
         }
         return redirect()->back()->with('error', __('There are some problem.'));
     }
@@ -266,5 +266,5 @@ class ConfigurationsController extends Controller
             return $config->save();
         }
     }
-    
+
 }

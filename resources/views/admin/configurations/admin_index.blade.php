@@ -39,7 +39,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                
+
                                 @forelse ($configurations as $configuration)
                                     <tr>
                                         <td> {{ $configuration->name }} </td>

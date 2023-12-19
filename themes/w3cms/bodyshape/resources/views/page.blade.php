@@ -70,7 +70,9 @@
                                     <div class="section-head">
                                         <h2 class="title wow fadeInUp" data-wow-delay="0.4s" style="visibility: visible; animation-delay: 0.4s; animation-name: fadeInUp;">Inspektorat <span>Tanggamus</span></h2>
                                         <p class="wow fadeInUp" data-wow-delay="0.6s" style="visibility: visible; animation-delay: 0.6s; animation-name: fadeInUp;">
-                                            Inspektorat Daerah Provinsi Tanggamus merupakan Perangkat Daerah Provinsi Tanggamus yang mempunyai tugas pokok melakukan pengawasan terhadap pelaksanaan urusan pemerintahan di Daerah Provinsi, pelaksanaan pembinaan atas penyelenggaraan pemerintahan daerah Kabupaten/Kota dan pelaksanaan urusan pemerintahan di Daerah Kabupaten/Kota.
+                                            @if (!empty(config('Theme.home_text')))
+                                                {!! config('Theme.home_text') !!}
+                                            @endif
                                         </p>
                                     </div>
 
@@ -84,14 +86,29 @@
 
 
 
-                    {!! DzHelper::recenthomeBlogs( array('limit'=>6, 'order'=>'asc', 'orderby'=>'created_at') ); !!}
+                    {!! DzHelper::recenthomepages( array('limit'=>6, 'order'=>'asc', 'orderby'=>'created_at') ); !!}
 
                     {!! DzHelper::homeGalery( array('limit'=>10, 'order'=>'asc', 'orderby'=>'created_at') ); !!}
 
 
             @elseif ($status == 'unlock_'.$page->id)
             <div class="container" style="padding:50px">
-                {!! html_entity_decode($page->content) !!}
+                <div class="dz-media">
+                    @php
+                        $imagepath = isset($page->page_metas) ? 'page-images' : 'page-images';
+                    @endphp
+                    @if(optional($page->feature_img)->value)
+                        <img src="{{ asset('storage/'.$imagepath.'/'.$page->feature_img->value) }}" alt="{{ __('page Image') }}">
+                    @else
+                        <img src="{{ asset('images/noimage.jpg') }}" alt="{{ __('page Image') }}">
+                    @endif
+                </div>
+                <hr>
+                <div class="dz-info m-b30">
+                    <div class="dz-meta">
+                        {!! html_entity_decode($page->content) !!}
+                    </div>
+                </div>
             </div>
                 <!-- Child Pages Detail End -->
                 @if (optional($page->child_pages)->isNotEmpty())

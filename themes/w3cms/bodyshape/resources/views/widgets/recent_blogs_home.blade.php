@@ -17,7 +17,7 @@
                         <div class="swiper-slide wow fadeInUp swiper-slide-visible swiper-slide-active" data-wow-delay="0.6s" role="group" aria-label="1 / 3" style="width: 450px; visibility: visible; animation-delay: 0.4s; animation-name: fadeInUp; margin-right: 30px;" data-swiper-slide-index="0">
                             <div class="dz-card style-1 overlay-shine">
                                 <div class="dz-media">
-                                    <a href="blog-details.html">
+                                    <a href="{!! DzHelper::laraBlogLink($blog->id) !!}">
                                         @if(optional($blog->feature_img)->value)
                                             <img src="{{ asset('storage/blog-images/'.$blog->feature_img->value) }}" alt="{{ __('Blog Image') }}" width="200" height="143">
                                         @else
@@ -31,7 +31,7 @@
                                             <li class="post-date"><a href="javascript:void(0);">{{ Carbon\Carbon::parse($blog->publish_on)->format('F j, Y') }}</a></li>
                                         </ul>
                                     </div>
-                                    <h4 class="dz-title"><a href="blog-details.html">{{$blog->title}}</a></h4>
+                                    <h4 class="dz-title"><a href="{!! DzHelper::laraBlogLink($blog->id) !!}">{{$blog->title}}</a></h4>
                                     {!!substr($blog->content, 0, 150)!!}
                                     <hr>
                                     <a href="{!! DzHelper::laraBlogLink($blog->id) !!}" class="btn btn-primary btn-skew"><span>Detail</span></a>

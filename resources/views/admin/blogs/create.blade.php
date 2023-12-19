@@ -75,7 +75,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-md-12" hidden>
+					<div class="col-md-12">
 						<div class="card accordion accordion-rounded-stylish accordion-bordered XExcerpt {{ $screenOption['Excerpt']['visibility'] ? '' : 'd-none' }}" id="accordion-excerpt">
 							<div class="card-header justify-content-start accordion-header" data-bs-toggle="collapse" data-bs-target="#with-excerpt" aria-expanded="true">
 								<h4 class="card-title">{{ __('Excerpt') }}</h4>
@@ -90,7 +90,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-md-12" hidden>
+					<div class="col-md-12">
 						<div class="card accordion accordion-rounded-stylish accordion-bordered XCustomFields {{ $screenOption['CustomFields']['visibility'] ? '' : 'd-none' }}" id="accordion-custom-fields">
 							<div class="card-header justify-content-start accordion-header" data-bs-toggle="collapse" data-bs-target="#with-custom-fields" aria-expanded="true">
 								<h4 class="card-title">{{ __('Custom Fields') }}</h4>
@@ -160,7 +160,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-md-12" hidden>
+					<div class="col-md-12">
 						<div class="card accordion accordion-rounded-stylish accordion-bordered XSlug {{ $screenOption['Slug']['visibility'] ? '' : 'd-none' }}" id="accordion-slug">
 							<div class="card-header justify-content-start accordion-header" data-bs-toggle="collapse" data-bs-target="#with-slug" aria-expanded="true">
 								<h4 class="card-title">{{ __('Slug') }}</h4>
@@ -198,7 +198,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-md-12" hidden>
+					<div class="col-md-12">
 						<div class="card accordion accordion-rounded-stylish accordion-bordered XSeo {{ $screenOption['Seo']['visibility'] ? '' : 'd-none' }}" id="accordion-seo">
 							<div class="card-header justify-content-start accordion-header" data-bs-toggle="collapse" data-bs-target="#with-seo" aria-expanded="true">
 								<h4 class="card-title">{{ __('Seo') }}</h4>

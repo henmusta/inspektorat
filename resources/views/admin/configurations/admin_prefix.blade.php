@@ -31,7 +31,17 @@
                         <form action="{{ route('admin.configurations.admin_prefix', $prefix) }}" method="post" enctype="multipart/form-data">
                         @csrf
                         	@forelse($configurations as $configuration)
-	                            <div class="form-group row">
+
+                                @php
+                                    $viewlabled = 'hidden';
+                                @endphp
+                                {{-- {{dd($configuration)}} --}}
+                                @if($configuration->viewlable == 1)
+                                    @php
+                                      $viewlabled = '';
+                                    @endphp
+                                @endif
+	                            <div {{$viewlabled}} class="form-group row">
 	                            	@if($configuration->title)
 	                            		@php
 	                            			$keyTitle = $configuration->title;
@@ -47,16 +57,19 @@
 	                                <div class="col-sm-6 form-group">
 	                                	@php
 	                                		$disabled = 'disabled';
+                                            $viewlabled = 'hidden';
 	                                	@endphp
 		                                @if($configuration->editable == 1)
 			                                @php
 			                                	$disabled = '';
 			                                @endphp
 		                                @endif
+
+
 		                                	@php
 												$keyE = explode('.', $configuration->name);
 												$keyTitle = ucfirst(str_replace('_', ' ', $keyE['1']));
-												
+
 												$label = $configuration->title ? $configuration->title : $keyTitle;
 												$i = $configuration->id;
 											@endphp
@@ -80,7 +93,7 @@
 													$options = explode(',', $configuration->params);
 													$newopts =array();
 												@endphp
-															
+
 												<select name="Configuration[{{ $i }}][value]" id="Configuration{{ $i }}Value" class="form-control" {{ $disabled }}>
 													@forelse($options as $key => $value)
 														<option value="{{ $value }}">{{ $value }}</option>
@@ -106,14 +119,14 @@
 															<input type="{{ $inputType }}" class="form-check-input" name="Configuration[{{ $i }}][value]" id="Configuration.{{ $i }}.Value" value="{{ $option[0] }}" {{ ($option[0] == $configuration->value) ? 'checked' : '' }} {{ $disabled }}>
 															<label class="form-check-label" >{!! $option[1] !!}</label>
 														</div>
-													@else	
+													@else
 													<div class="form-check">
 														<input type="{{ $inputType }}" class="form-check-input" name="Configuration[{{ $i }}][value]" id="Configuration.{{ $i }}.Value" value="{{ $value }}" {{ ($value == $configuration->value) ? 'checked="checked"' : '' }} {{ $disabled }}>
 														<label class="form-check-label" >{!! $value !!}</label>
 													</div>
 													@endif
 												@empty
-												@endforelse	
+												@endforelse
 											@elseif($inputType == 'textarea')
 												<textarea name="Configuration[{{ $i }}][value]" id="Configuration.{{ $i }}.Value" class="form-control h-100" rows="4" {{ $disabled }}>{{ $configuration->value }}</textarea>
 
@@ -141,7 +154,7 @@
 														<div class=" col-6 col-lg-4 col-xl-3 p-0 pe-2 mb-1" id="RemoveBannerImg_{{ $key }}-{{ $configuration->id }}">
 															<div class="custom-image-delete" >
 																<img src="{{ asset('storage/configuration-images/'.$image) }}" alt="{{ $image }}" class="rounded w-100 object-fit-cover" height="80px">
-																
+
 																<a href="javascript:void(0);" rdx-link="{{ route('admin.configurations.remove_config_image', ['id'=>$configuration->id,'name'=>$image]) }}" class="rdxUpdateAjax delete-btn text-danger" rdx-delete-box="RemoveBannerImg_{{ $key }}-{{ $configuration->id }}"><i class="far fa-times-circle"></i></a>
 															</div>
 														</div>

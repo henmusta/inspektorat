@@ -10,7 +10,7 @@
 @endphp
 
 <div class="container-fluid">
-	<div class="row">
+	<div hidden class="row">
 		<div class="col-md-12">
 			<div class="card accordion accordion-rounded-stylish accordion-bordered" id="accordion-slug">
 			    <div class="card-header justify-content-start accordion-header" data-bs-toggle="collapse" data-bs-target="#with-slug" aria-expanded="true">
@@ -324,7 +324,7 @@
 						<input type="hidden" name="Menu[id]" id="NewMenuId" value="{{ optional($menu)->id }}">
 						<div class="card card-menu-items">
 							<div class="card-header bg-primary">
-								<h4 class="card-title">{{ __('Menu Name') }}</h4> 
+								<h4 class="card-title">{{ __('Menu Name') }}</h4>
 								<input type="text" name="Menu[title]" class="form-control" id="MenuTitle" maxlength="255" value="{{ optional($menu)->title }}" required="required">
 								<input type="hidden" name="Menu[slug]" id="MenuSlug" value="{{ optional($menu)->slug }}">
 								<button type="submit" class="btn btn-success" title="{{ __('Click here to save the menu') }}">{{ __('Save Menu') }}</button>
@@ -409,7 +409,7 @@
 							            </ol>
 
 							            <hr>
-							            
+
 							            <div class="menu-settings">
 							            	<h3>{{ __('Menu Settings') }}</h3>
 							            	<div class="row">
@@ -420,7 +420,7 @@
 													<div class="form-group">
 														@forelse($menusLocations as $key => $value)
 															@php
-									            				$menu_name = DzHelper::getMenuTitle($menusLocations[$key]['menu']); 
+									            				$menu_name = DzHelper::getMenuTitle($menusLocations[$key]['menu']);
 									            			@endphp
 															<div class="form-check  text-nowrap mb-2">
 																<input type="checkbox" name="MenuLocation[{{ $key }}][menu]" class="form-check-input" id="{{ $key }}" value="{{ optional($menu)->id }}" {{ !empty($menusLocations[$key]['menu']) && ($menusLocations[$key]['menu'] == optional($menu)->id) ? 'checked' : '' }} >

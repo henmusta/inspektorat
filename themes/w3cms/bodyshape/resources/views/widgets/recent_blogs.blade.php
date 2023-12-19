@@ -1,12 +1,12 @@
 <div class="widget recent-posts-entry">
     <div class="widget-title">
-        <h4 class="title">{{ __('Recent Post') }}</h4>
-        
+        <h4 class="title">Postingan Terbaru</h4>
+
     </div>
     <div class="widget-post-bx">
         @forelse($blogs as $blog)
             <div class="widget-post clearfix">
-                <div class="dz-media"> 
+                <div class="dz-media">
                     @if(optional($blog->feature_img)->value)
                         <img src="{{ asset('storage/blog-images/'.$blog->feature_img->value) }}" alt="{{ __('Blog Image') }}" width="200" height="143">
                     @else
