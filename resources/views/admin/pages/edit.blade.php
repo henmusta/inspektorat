@@ -5,7 +5,7 @@
 @section('content')
 
 <div class="container-fluid">
-	<div class="card accordion accordion-rounded-stylish accordion-bordered" id="accordion-slug">
+	<div hidden class="card accordion accordion-rounded-stylish accordion-bordered" id="accordion-slug">
 	    <div class="card-header justify-content-start accordion-header" data-bs-toggle="collapse" data-bs-target="#with-slug" aria-expanded="true">
 	        <h4 class="card-title">{{ __('Screen Options') }}</h4>
 	        <span class="accordion-header-indicator"></span>
@@ -123,14 +123,14 @@
 					                    		@endphp
 				                    			<div class="row xrow">
 				                    				<div class="col-md-6 form-group">
-				                    					<label for="PageMetaName_{{ $count }}">{{ __('Title') }}</label> 
-				                    					<input type="text" name="data[PageMeta][{{ $count }}][title]" class="form-control" id="PageMetaName_{{ $count }}" value="{{ $custom_field['title'] }}"> 
-				                    				</div> 
-				                    				<div class="col-md-6 form-group"> 
-				                    					<label for="PageMetaValue_{{ $count }}">Value</label> 
-				                    					<textarea name="data[PageMeta][{{ $count }}][value]" id="PageMetaValue_{{ $count }}" class="form-control" rows="5">{{ $custom_field['value'] }}</textarea> 
-				                    				</div> 
-				                    				<div class="col-md-12 form-group"> 
+				                    					<label for="PageMetaName_{{ $count }}">{{ __('Title') }}</label>
+				                    					<input type="text" name="data[PageMeta][{{ $count }}][title]" class="form-control" id="PageMetaName_{{ $count }}" value="{{ $custom_field['title'] }}">
+				                    				</div>
+				                    				<div class="col-md-6 form-group">
+				                    					<label for="PageMetaValue_{{ $count }}">Value</label>
+				                    					<textarea name="data[PageMeta][{{ $count }}][value]" id="PageMetaValue_{{ $count }}" class="form-control" rows="5">{{ $custom_field['value'] }}</textarea>
+				                    				</div>
+				                    				<div class="col-md-12 form-group">
 				                    					<input type="hidden" name="data[PageMeta][{{ $count }}][meta_id]" value="{{ isset($custom_field['id']) ? $custom_field['id'] : 0 }}">
 				                    					<button  class="btn btn-danger CustomFieldRemoveButton" type="button">{{ __('Delete') }}</button>
 				                    				</div>
@@ -233,7 +233,7 @@
 		                </div>
 					</div>
 				</div>
-			</div>	
+			</div>
 			<div class="col-md-4">
 				<div class="row">
 					<div class="col-md-12">
@@ -327,14 +327,14 @@
 		                        <span class="accordion-header-indicator"></span>
 		                    </div>
 		                    <div class="accordion__body p-4 collapse show" id="with-author" data-bs-parent="#accordion-author">
-		                        <div class="featured-img-preview img-parent-box"> 
+		                        <div class="featured-img-preview img-parent-box">
 		                        	@php
 		                        		$ximageMetaId = optional($page->feature_img)->id;
 		                        		$ximageMetaValue = optional($page->feature_img)->value;
 		                        		$ximage_url = !empty($ximageMetaValue) ? asset('storage/page-images/'.$ximageMetaValue) : asset('images/noimage.jpg');
 		                        	@endphp
 		                        	<div id="RemoveItemImg_{{ $page->id }}">
-										<img src="{{ $ximage_url }}" class="avatar img-for-onchange" alt="{{ __('Image') }}" title="{{ __('Image') }}"> 
+										<img src="{{ $ximage_url }}" class="avatar img-for-onchange" alt="{{ __('Image') }}" title="{{ __('Image') }}">
 									</div>
 									<div class="d-flex align-items-center">
 										@if($ximageMetaValue)
