@@ -172,6 +172,7 @@
                             <a href="{{ route('admin.configurations.admin_prefix', 'Site') }}">Situs</a>
                             <a href="{{ route('admin.configurations.admin_prefix', 'Social') }}">Social Media</a>
                             <a href="{{ route('admin.configurations.admin_prefix', 'Theme') }}">Banner Dan Text</a>
+                            <a href="{{ route('admin.configurations.admin_prefix', 'Widget') }}">Widget</a>
                         </li>
                     </ul>
                 </li>
