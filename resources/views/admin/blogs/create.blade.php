@@ -296,7 +296,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-md-12">
+					<div class="col-md-12" hidden>
 						<div class="card accordion accordion-rounded-stylish accordion-bordered XTags {{ $screenOption['Tags']['visibility'] ? '' : 'd-none' }}" id="accordion-tags">
 							<div class="card-header justify-content-start accordion-header" data-bs-toggle="collapse" data-bs-target="#with-tags" aria-expanded="true">
 								<h4 class="card-title">{{ __('Tags') }}</h4>
