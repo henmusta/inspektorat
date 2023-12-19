@@ -40,7 +40,7 @@ class GaleriController extends Controller
               data-bs-url="' . route('galeri.admin.delete', $row->id) .'"
               class="btn btn-danger shadow btn-xs sharp me-1"><i class="fa fa-trash"></i></a>';
               return '
-                    '.$edit.'
+
                     '.$delete.'
                 ';
             })
