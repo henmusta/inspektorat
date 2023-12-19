@@ -195,7 +195,7 @@
 				}
 			},
 			toolbar: [{
-				items: ['Image',"Source", "-", "SelectAll", "TextColor", "BGColor", "Bold", "Italic", "Underline", "Strike", "Subscript", "Superscript", "-", "Undo", "Redo", "-", "Find", "-", "NumberedList", "BulletedList", "-", "Outdent", "Indent", "-"]
+				items: ['Link','Image',"Source", "-", "SelectAll", "TextColor", "BGColor", "Bold", "Italic", "Underline", "Strike", "Subscript", "Superscript", "-", "Undo", "Redo", "-", "Find", "-", "NumberedList", "BulletedList", "-", "Outdent", "Indent", "-"]
 			}, {
 				items: [, "BidiLtr", "BidiRtl", "Link", "Unlink", "Table", "HorizontalRule", "SpecialChar"]
 			}, "/", {
