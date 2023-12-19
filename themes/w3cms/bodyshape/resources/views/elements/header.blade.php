@@ -11,7 +11,6 @@
 				</div>
 				<div class="dz-topbar-right">
 					<ul>
-						<li><i class="fa-regular fa-clock"></i> {{ config('Site.office_time') }}</li>
 						<li><i class="fa fa-phone"></i> {{ config('Site.contact') }}</li>
 					</ul>
 				</div>
