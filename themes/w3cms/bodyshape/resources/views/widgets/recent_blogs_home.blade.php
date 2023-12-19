@@ -8,7 +8,7 @@
                         </div>
                     </div>
                     <div class="col-xl-5 text-md-end d-flex align-items-center justify-content-xl-end justify-content-sm-between justify-content-center m-sm-b30 m-b40 wow fadeInUp" data-wow-delay="0.2s" style="visibility: visible; animation-delay: 0.2s; animation-name: fadeInUp;">
-                        <a href="blog-grid.html" class="btn btn-primary btn-skew d-none d-sm-block"><span>Lihat Semua Postingan</span></a>
+                        <a href="/blog" class="btn btn-primary btn-skew d-none d-sm-block"><span>Lihat Semua Postingan</span></a>
                     </div>
                 </div>
                 <div class="swiper blog-slider-full blog-slider-wrapper swiper-initialized swiper-horizontal swiper-pointer-events swiper-watch-progress swiper-backface-hidden">
