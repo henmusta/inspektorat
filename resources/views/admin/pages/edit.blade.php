@@ -261,7 +261,7 @@
 		                    			<label for="ContentVisibility"><i class="fa fa-eye"></i> {{ __('Visibility:') }}</label>
 		                    			<select name="data[Page][visibility]" id="ContentVisibility" class="default-select form-control">
 		                    				<option value="Pu" {{ old('data.Page.visibility', $page->visibility) == 'Pu' ? 'selected="selected"' : '' }}>{{ __('Public') }}</option>
-		                    				<option value="PP" {{ old('data.Page.visibility', $page->visibility) == 'PP' ? 'selected="selected"' : '' }}>{{ __('Password protected') }}</option>
+		                    				{{-- <option value="PP" {{ old('data.Page.visibility', $page->visibility) == 'PP' ? 'selected="selected"' : '' }}>{{ __('Password protected') }}</option> --}}
 		                    				<option value="Pr" {{ old('data.Page.visibility', $page->visibility) == 'Pr' ? 'selected="selected"' : '' }}>{{ __('Private') }}</option>
 		                    			</select>
 		                    		</div>
