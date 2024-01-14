@@ -38,59 +38,25 @@
 				</div>
 				<div class="card-body">
 					<div class="table-responsive">
-						<table class="table table-responsive-lg mb-0">
+						<table id="Datatable" class="table table-responsive-lg mb-0" width="100%">
 							<thead class="">
 								<tr>
-									<th> <strong> {{ __('S.N.') }} </strong> </th>
-									<th> <strong> {!! DzHelper::dzSortable('title', __('Title')) !!} </strong> </th>
-									<th> <strong> {!! DzHelper::dzSortable('name.users', __('Author')) !!} </strong> </th>
-									<th> <strong> {!! DzHelper::dzSortable('status', __('Status')) !!} </strong> </th>
-									<th> <strong> {!! DzHelper::dzSortable('visibility', __('Visibility')) !!} </strong> </th>
-									<th> <strong> {!! DzHelper::dzSortable('created_at', __('Created')) !!} </strong> </th>
-									@canany(['Controllers > BlogsController > admin_edit', 'Controllers > BlogsController > admin_destroy'])
-										<th class="text-center"> <strong> {{ __('Actions') }} </strong> </th>
-                                    @endcanany
+									{{-- <th> <strong> {{ __('S.N.') }} </strong> </th> --}}
+									<th> <strong>Judul</strong> </th>
+									<th> <strong>Penulis</strong> </th>
+									<th> <strong>Status</strong> </th>
+									<th> <strong>Created</strong> </th>
+                                    <th class="text-center"><strong>Aksi</strong></th>
 								</tr>
 							</thead>
 							<tbody>
-								@php
-									$i = $blogs->firstItem();
-								@endphp
-								@forelse ($blogs as $page)
-									<tr>
-										<td> {{ $i++ }} </td>
-										<td> {{ Str::limit($page->title, 30, ' ...') }} </td>
-										<td> {{ $page->user_name }} </td>
-										<td> {{ $status[$page->status] }} </td>
-										<td>
-											@if ($page->visibility == 'Pr')
-												<span class="badge badge-danger">{{ __('Private') }}</span>
-											@elseif($page->visibility == 'PP')
-												<span class="badge badge-warning">{{ __('Password Protected') }}</span>
-											@else
-												<span class="badge badge-success">{{ __('Public') }}</span>
-											@endif
-										</td>
-										<td> {{ $page->created_at }} </td>
-										<td class="text-center">
-											@can('Controllers > BlogsController > admin_edit')
-												<a href="{{ route('blog.admin.edit', $page->id) }}" class="btn btn-primary shadow btn-xs sharp me-1"><i class="fas fa-pencil-alt"></i></a>
-											@endcan
-											@can('Controllers > BlogsController > admin_destroy')
-												<a href="{{ route('blog.admin.admin_trash_status', $page->id) }}" class="btn btn-danger shadow btn-xs sharp"><i class="fa fa-trash"></i></a>
-											@endcan
-										</td>
-									</tr>
-								@empty
-									<tr><td class="text-center" colspan="7"><p>{{ __('No blogs found.') }}</p></td></tr>
-								@endforelse
 
 							</tbody>
 						</table>
 					</div>
 				</div>
 				<div class="card-footer">
-                    {{ $blogs->onEachSide(2)->appends(Request::input())->links() }}
+
 				</div>
 			</div>
 		</div>
@@ -99,4 +65,54 @@
 </div>
 
 
+
+
 @endsection
+
+@push('inline-scripts')
+<script>
+    $(function(){
+
+        let dataTable = new DataTable('#Datatable', {
+            responsive: true,
+            scrollX: false,
+            processing: true,
+            serverSide: true,
+            order: [[0, 'desc']],
+            lengthMenu: [[50, -1], [50, "All"]],
+            pageLength: 50,
+            ajax: {
+            url: "{{ route('blog.admin.index') }}",
+                data: function (d) {
+                }
+            },
+            columns: [
+                {data: 'title', name: 'title'},
+                {data: 'user_name', name: 'user_name'},
+                {data: 'status', name: 'status'},
+                {data: 'created_at', name: 'created_at'},
+                {data: 'action', className:'text-center', name: 'action', orderable: false, searchable: false},
+            ],
+            columnDefs: [
+            {
+                className: 'dt-center',
+                targets: 2,
+                render: function (data, type, full, meta) {
+                let status = {
+                    0: {'title': 'Draft', 'class': ' badge-danger'},
+                    2: {'title': 'Warning', 'class': ' badge-warning'},
+                    1: {'title': 'Publish', 'class': ' badge-success'},
+                };
+                if (typeof status[data] === 'undefined') {
+                    return data;
+                }
+                return '<span class="badge ' + status[data].class + '">' + status[data].title +
+                    '</span>';
+                },
+            },
+        ],
+        });
+
+    });
+</script>
+@endpush

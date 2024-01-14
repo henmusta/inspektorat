@@ -24,24 +24,18 @@ class GaleriController extends Controller
         if ($request->ajax()) {
             $data = Galeri::query();
 
-        //     @can('Controllers > BlogsController > admin_edit')
-        //     <a href="{{ route('blog.admin.edit', $page->id) }}" class="btn btn-primary shadow btn-xs sharp me-1"><i class="fas fa-pencil-alt"></i></a>
-        // @endcan
-        // @can('Controllers > BlogsController > admin_destroy')
-        //     <a href="{{ route('blog.admin.admin_trash_status', $page->id) }}" class="btn btn-danger shadow btn-xs sharp"><i class="fa fa-trash"></i></a>
-        // @endcan
 
             return DataTables::of($data)
               ->addColumn('action', function ($row) {
                 $edit = ' <a href="'.route('galeri.admin.edit', $row->id).'" class="btn btn-primary shadow btn-xs sharp me-1"><i class="fas fa-pencil-alt"></i></a>';
               //  $delete = '    <a href="'. route('galeri.admin.delete', $row->id) .'" class="btn btn-danger shadow btn-xs sharp me-1"><i class="fa fa-trash"></i></a>';
               $delete = '  <a href="#" data-bs-toggle="modal" data-bs-target="#modalDelete"
-              data-bs-id="' . $row->id . '"
-              data-bs-url="' . route('galeri.admin.delete', $row->id) .'"
-              class="btn btn-danger shadow btn-xs sharp me-1"><i class="fa fa-trash"></i></a>';
+                            data-bs-id="' . $row->id . '"
+                            data-bs-url="' . route('galeri.admin.delete', $row->id) .'"
+                            class="btn btn-danger shadow btn-xs sharp me-1"><i class="fa fa-trash"></i></a>';
               return '
-
                     '.$delete.'
+                    '.$edit.'
                 ';
             })
             ->editColumn('image', function (Galeri $galeri) {
@@ -109,27 +103,16 @@ class GaleriController extends Controller
 
     }
 
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Galeri  $galeri
-     * @return \Illuminate\Http\Response
-     */
     public function show(Galeri $galeri)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Galeri  $galeri
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Galeri $galeri)
+    public function admin_edit($id)
     {
-        //
+        $page_title = 'Galeri Edit';
+        $galeri = Galeri::findorFail($id);
+        return view('admin.galeri.edit', compact('galeri'));
     }
 
     /**
@@ -139,9 +122,54 @@ class GaleriController extends Controller
      * @param  \App\Models\Galeri  $galeri
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Galeri $galeri)
+    public function admin_update(Request $request, $id)
     {
-        //
+        $validation = [
+            'data.Galeri.title'     => 'required',
+            'data.GaleriImage.value'     => 'mimes:jpg,png,jpeg,gif',
+        ];
+
+        $validationMsg = [
+            'data.Galeri.title.required'      => __('The title field is required.'),
+            'data.GaleriImage.value.mimes'   => __('The feature image must be a file of type: jpg, png, jpeg, gif.'),
+        ];
+
+        $this->validate($request, $validation, $validationMsg);
+
+        DB::beginTransaction();
+        try {
+            $galeriData   = $request->input('data.Galeri');
+            $galeriImage   = $request->input('data.GaleriImage');
+            $galeriData['user_id'] = Auth::id();
+            $galeri       = Galeri::findOrFail($id);
+            if($galeri)
+            {
+            if(!empty(request()->file('data.GaleriImage')))
+                {
+
+                    Storage::disk('public')->delete(['/galeri-images/' . $galeri['value']]);
+                    $image_file = request()->file('data.GaleriImage.value');
+                    $OriginalName =  $image_file->getClientOriginalName();
+                    $fileName = time().'_'.$OriginalName;
+                    $image_file->storeAs('public/galeri-images/', $fileName);
+                    $galeri->update([
+                        'title' => $galeriData['title'],
+                        'value' => $fileName,
+                    ]);
+                }
+                DB::commit();
+                return redirect()->route('galeri.admin.index')->with('success', __('Galeri Berhasil Di Ubah.'));
+
+            }
+            return redirect()->back()->with('error', __('Something went wrong. Please try again.'));
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            dd($e->getMessage());
+        }
+
+
+
     }
 
     /**

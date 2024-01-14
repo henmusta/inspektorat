@@ -8,14 +8,14 @@
 	<div class="row page-titles mx-0 mb-3">
 		<div class="col-sm-6 p-0">
 			<div class="welcome-text">
-				<h4>{{ __('Blogs') }}</h4>
-				<span>{{ __('All Trashed Blogs') }}</span>
+				<h4>Postingan</h4>
+				<span>Semua Postingan</span>
 			</div>
 		</div>
 		<div class="col-sm-6 p-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{ route('blog.admin.index') }}">{{ __('Blogs') }}</a></li>
-				<li class="breadcrumb-item active"><a href="javascript:void(0)">{{ __('All Trashed Blogs') }}</a></li>
+				<li class="breadcrumb-item"><a href="{{ route('blog.admin.index') }}">Postingan Trash</a></li>
+				<li class="breadcrumb-item active"><a href="javascript:void(0)">Semua Postingan Trash</a></li>
 			</ol>
 		</div>
 	</div>
@@ -27,62 +27,28 @@
 		<div class="col-xl-12">
 			<div class="card">
 				<div class="card-header">
-					<h4 class="card-title">{{ __('All Trashed Blogs') }}</h4>
+					<h4 class="card-title">Semua Postingan Trash</h4>
 				</div>
 				<div class="card-body">
 					<div class="table-responsive">
-						<table class="table table-responsive-lg mb-0">
+						<table id="Datatable" class="table table-responsive-lg mb-0">
 							<thead class="">
 								<tr>
-									<th> <strong> S.N. </strong> </th>
-									<th> <strong> {!! DzHelper::dzSortable('title', 'Title') !!} </strong> </th>
-									<th> <strong> {!! DzHelper::dzSortable('name.users', 'Author') !!} </strong> </th>
-									<th> <strong> {!! DzHelper::dzSortable('status', 'Status') !!} </strong> </th>
-									<th> <strong> {!! DzHelper::dzSortable('visibility', 'Visibility') !!} </strong> </th>
-									<th> <strong> {!! DzHelper::dzSortable('created_at', 'Created') !!} </strong> </th>
-									@canany(['Controllers > BlogsController > admin_edit', 'Controllers > BlogsController > admin_destroy'])
-										<th class="text-center"> <strong> {{ __('Actions') }} </strong> </th>
-                                    @endcanany
+									<th> <strong>Judul</strong> </th>
+									<th> <strong>Penulis</strong> </th>
+									<th> <strong>Status</strong> </th>
+									<th> <strong>Created</strong> </th>
+                                    <th class="text-center"><strong>Aksi</strong></th>
 								</tr>
 							</thead>
 							<tbody>
-								@php
-									$i = $blogs->firstItem();
-									$status = array('1' => 'Published', '2' => 'Draft', '3' => 'Trash', '4' => 'Private', '5' => 'Pending');
-								@endphp
-								@forelse ($blogs as $blog)
-									<tr>
-										<td> {{ $i++ }} </td>
-										<td> {{ Str::limit($blog->title, 30, ' ...') }} </td>
-										<td> {{ $blog->user_name }} </td>
-										<td> {{ $status[$blog->status] }} </td>
-										<td> 
-											@if ($blog->visibility == 'Pr')
-												<span class="badge badge-danger">{{ __('Private') }}</span>
-											@elseif($blog->visibility == 'PP')
-												<span class="badge badge-warning">{{ __('Password Protected') }}</span>
-											@else
-												<span class="badge badge-success">{{ __('Public') }}</span>
-											@endif
-										</td>
-										<td> {{ $blog->created_at }} </td>
-										<td class="text-center">
-												<a href="{{ route('blog.admin.restore_blog', $blog->id) }}" class="btn btn-primary shadow btn-xs sharp me-1"><i class="fas fa-trash-restore"></i></a>
-											@can('Controllers > BlogsController > admin_destroy')
-												<a href="{{ route('blog.admin.destroy', $blog->id) }}" class="btn btn-danger shadow btn-xs sharp"><i class="fa fa-trash"></i></a>
-											@endcan
-										</td>
-									</tr>
-								@empty
-									<tr><td class="text-center" colspan="7"><p>{{ __('Blogs Not Found.') }}</p></td></tr>
-								@endforelse
 
 							</tbody>
 						</table>
 					</div>
 				</div>
 				<div class="card-footer">
-                    {{ $blogs->onEachSide(2)->appends(Request::input())->links() }}
+
 				</div>
 			</div>
 		</div>
@@ -90,5 +56,112 @@
 
 </div>
 
+<div class="modal fade" id="modalDelete" tabindex="-1" aria-labelledby="modalDeleteLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalDeleteLabel">Hapus</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+        @method('DELETE')
+        <div class="modal-body">
+          <a href="" class="urlDelete" type="hidden"></a>
+          Apa anda yakin ingin menghapus data ini?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+          <button id="formDelete" type="button" class="btn btn-primary">Submit</button>
+        </div>
+      </div>
+    </div>
+</div>
 
 @endsection
+
+
+@push('inline-scripts')
+<script>
+    $(function(){
+        let modalDelete = document.getElementById('modalDelete');
+        const bsDelete = new bootstrap.Modal(modalDelete);
+        let dataTable = new DataTable('#Datatable', {
+            responsive: true,
+            scrollX: false,
+            processing: true,
+            serverSide: true,
+            order: [[0, 'desc']],
+            lengthMenu: [[50, -1], [50, "All"]],
+            pageLength: 50,
+            ajax: {
+            url: "{{ route('blog.admin.trash_list') }}",
+                data: function (d) {
+                }
+            },
+            columns: [
+                {data: 'title', name: 'title'},
+                {data: 'user_name', name: 'user_name'},
+                {data: 'status', name: 'status'},
+                {data: 'created_at', name: 'created_at'},
+                {data: 'action', className:'text-center', name: 'action', orderable: false, searchable: false},
+            ],
+            columnDefs: [
+            {
+                className: 'dt-center',
+                targets: 2,
+                render: function (data, type, full, meta) {
+                let status = {
+                    2: {'title': 'Draft', 'class': ' badge-danger'},
+                    3: {'title': 'Warning', 'class': ' badge-warning'},
+                    1: {'title': 'Publish', 'class': ' badge-success'},
+                };
+                if (typeof status[data] === 'undefined') {
+                    return data;
+                }
+                return '<span class="badge ' + status[data].class + '">' + status[data].title +
+                    '</span>';
+                },
+            },
+        ],
+        });
+
+        modalDelete.addEventListener('show.bs.modal', function (event) {
+            let button = event.relatedTarget;
+            let id = button.getAttribute('data-bs-id');
+            let url = button.getAttribute('data-bs-url');
+            this.querySelector('.urlDelete').setAttribute('href', url);
+        });
+        modalDelete.addEventListener('hidden.bs.modal', function (event) {
+            this.querySelector('.urlDelete').setAttribute('href', '');
+        });
+
+        $("#formDelete").click(function (e) {
+            e.preventDefault();
+            let form = $(this);
+            let url = modalDelete.querySelector('.urlDelete').getAttribute('href');
+            let btnHtml = form.html();
+            let spinner = $("<span aria-hidden='true' class='spinner-border spinner-border-sm' role='status'></span>");
+            $.ajax({
+            beforeSend: function () {
+                form.text(' Loading. . .').prepend(spinner).prop("disabled", "disabled");
+            },
+            type: 'GET',
+            url: url,
+            dataType: 'json',
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            success: function (response) {
+            toastr.success(response.message, 'Success !');
+                form.text('Submit').html(btnHtml).removeAttr('disabled');
+                dataTable.draw();
+                bsDelete.hide();
+            },
+            error: function (response) {
+            toastr.error(response.responseJSON.message, 'Failed !');
+                form.text('Submit').html(btnHtml).removeAttr('disabled');
+                bsDelete.hide();
+            }
+            });
+        });
+    });
+</script>
+@endpush

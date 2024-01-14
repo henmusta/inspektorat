@@ -13,6 +13,7 @@ use App\Models\BlogMeta;
 use App\Models\BlogSeo;
 use App\Rules\EditorEmptyCheckRule;
 use App\Models\User;
+use Yajra\DataTables\Facades\DataTables;
 use Auth;
 use Storage;
 
@@ -25,62 +26,31 @@ class BlogsController extends Controller
      */
     public function admin_index(Request $request)
     {
-        $page_title = __('All Blogs');
-        $resultQuery = Blog::query();
-        $users = User::get();
-        $blog_categories = BlogCategory::get();
-        $blog_tags = BlogTag::get();
 
-        if($request->isMethod('get') && $request->input('todo') == 'Filter')
-        {
-            if($request->filled('title')) {
-                $resultQuery->where('title', 'like', "%{$request->input('title')}%");
-            }
-            if($request->filled('status')) {
-                $resultQuery->where('status', '=', $request->input('status'));
-            }
-            if($request->filled('from') && $request->filled('to')) {
-                $resultQuery->whereBetween('blogs.created_at', [$request->input('from'), $request->input('to')]);
-            }
-            if($request->filled('publish_on')) {
-                $resultQuery->whereDate('publish_on', '=', $request->input('publish_on'));
-            }
-            if($request->filled('user')) {
-                $resultQuery->where('user_id', '=', $request->input('user'));
-            }
-            if($request->filled('visibility')) {
-                $resultQuery->where('visibility', '=', $request->input('visibility'));
-            }
-            if($request->filled('category')) {
-                $resultQuery->whereHas('blog_categories',function($query) use($request){
-                    $query->where('blog_categories.id', '=', $request->input('category'));
-                });
-            }
-            if($request->filled('tag')) {
-                $resultQuery->whereHas('blog_tags',function($query) use($request){
-                    $query->where('blog_tags.id', '=', $request->input('tag'));
-                });
-            }
-        }
-        $resultQuery->join('users', 'blogs.user_id', '=', 'users.id');
-        $resultQuery->select('blogs.*','users.name as user_name');
-        $resultQuery->where('status', '!=', 3);
+        $page_title = 'Semua Postingan';
 
-        $sortBy = $request->get('sort') ? $request->get('sort') : 'created_at';
-        $direction = $request->get('direction') ? $request->get('direction') : 'desc';
-        $sortWith = $request->get('with') ? $request->get('with') : Null;
-        if($sortWith == 'users')
-        {
-            $resultQuery->orderBy('users.'.$sortBy, $direction);
-        }
-        else{
-            $resultQuery->orderBy('blogs.'.$sortBy, $direction);
+        if ($request->ajax()) {
+            $data = Blog::query();
+            $data->join('users', 'blogs.user_id', '=', 'users.id');
+            $data->select('blogs.*','users.name as user_name');
+            $data->where('status', '!=', 3);
+
+            return DataTables::of($data)
+              ->addColumn('action', function ($row) {
+                $edit = ' <a href="'.route('blog.admin.edit', $row->id).'" class="btn btn-primary shadow btn-xs sharp me-1"><i class="fas fa-pencil-alt"></i></a>';
+                $delete = '    <a href="'. route('blog.admin.admin_trash_status', $row->id) .'" class="btn btn-danger shadow btn-xs sharp me-1"><i class="fa fa-trash"></i></a>';
+
+              return '
+                    '.$edit.'
+                    '.$delete.'
+                ';
+            })
+
+             ->rawColumns(['action'])
+            ->make(true);
         }
 
-        $blogs = $resultQuery->paginate(config('Reading.nodes_per_page'));
-        $status = config('blog.status');
-
-        return view('admin.blogs.index', compact('blogs','blog_categories','blog_tags','users','page_title', 'status'));
+        return view('admin.blogs.index', compact('page_title'));
     }
 
     /**
@@ -388,28 +358,54 @@ class BlogsController extends Controller
 
     public function trash_list(Request $request)
     {
-        $page_title = 'Trashed Blogs';
-        $resultQuery = Blog::query();
+        $page_title = 'Postingan Trash';
 
+        if ($request->ajax()) {
+            $data = Blog::query();
+            $data->join('users', 'blogs.user_id', '=', 'users.id');
+            $data->select('blogs.*','users.name as user_name');
+            $data->where('status', '=', 3);
 
-        $resultQuery->join('users', 'blogs.user_id', '=', 'users.id');
-        $resultQuery->select('blogs.*','users.name as user_name');
-        $resultQuery->where('status', '=', 3);
+            return DataTables::of($data)
+              ->addColumn('action', function ($row) {
+                $edit     = ' <a href="'.route('blog.admin.edit', $row->id).'" class="btn btn-primary shadow btn-xs sharp me-1"><i class="fas fa-pencil-alt"></i></a>';
+           //     $delete = ' <a href="'. route('blog.admin.admin_trash_status', $row->id) .'" class="btn btn-danger shadow btn-xs sharp me-1"><i class="fa fa-trash"></i></a>';
+                $delete   = '  <a href="#" data-bs-toggle="modal" data-bs-target="#modalDelete"
+                        data-bs-id="' . $row->id . '"
+                        data-bs-url="' . route('blog.admin.destroy', $row->id) .'"
+                        class="btn btn-danger shadow btn-xs sharp me-1"><i class="fa fa-trash"></i></a>';
+              return '
+                    '.$edit.'
+                    '.$delete.'
+                ';
+            })
 
-        $sortBy = $request->get('sort') ? $request->get('sort') : 'created_at';
-        $direction = $request->get('direction') ? $request->get('direction') : 'desc';
-        $sortWith = $request->get('with') ? $request->get('with') : Null;
-        if($sortWith == 'users')
-        {
-            $resultQuery->orderBy('users.'.$sortBy, $direction);
+             ->rawColumns(['action'])
+            ->make(true);
         }
-        else{
-            $resultQuery->orderBy('blogs.'.$sortBy, $direction);
-        }
 
-        $blogs = $resultQuery->paginate(config('Reading.nodes_per_page'));
 
-        return view('admin.blogs.trashed_blogs', compact('blogs'));
+        // $resultQuery = Blog::query();
+
+
+        // $resultQuery->join('users', 'blogs.user_id', '=', 'users.id');
+        // $resultQuery->select('blogs.*','users.name as user_name');
+        // $resultQuery->where('status', '=', 3);
+
+        // $sortBy = $request->get('sort') ? $request->get('sort') : 'created_at';
+        // $direction = $request->get('direction') ? $request->get('direction') : 'desc';
+        // $sortWith = $request->get('with') ? $request->get('with') : Null;
+        // if($sortWith == 'users')
+        // {
+        //     $resultQuery->orderBy('users.'.$sortBy, $direction);
+        // }
+        // else{
+        //     $resultQuery->orderBy('blogs.'.$sortBy, $direction);
+        // }
+
+        // $blogs = $resultQuery->paginate(config('Reading.nodes_per_page'));
+
+        return view('admin.blogs.trashed_blogs', compact('page_title'));
     }
 
     public function blogCategoryTree1($id = Null, $level = 0)

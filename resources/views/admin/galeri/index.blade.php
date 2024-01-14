@@ -43,7 +43,7 @@
 							<thead class="">
 								<tr>
 									<th> <strong>Image</strong> </th>
-									<th> <strong>Keterangan</strong> </th>
+									<th> <strong>Judul</strong> </th>
 									<th> <strong>Aksi</strong></th>
 								</tr>
 							</thead>
@@ -111,45 +111,43 @@
             ],
         });
 
-      modalDelete.addEventListener('show.bs.modal', function (event) {
-        let button = event.relatedTarget;
-        let id = button.getAttribute('data-bs-id');
-        let url = button.getAttribute('data-bs-url');
-        this.querySelector('.urlDelete').setAttribute('href', url);
-      });
-      modalDelete.addEventListener('hidden.bs.modal', function (event) {
-        this.querySelector('.urlDelete').setAttribute('href', '');
-      });
-
-
-      $("#formDelete").click(function (e) {
-        e.preventDefault();
-        let form = $(this);
-        let url = modalDelete.querySelector('.urlDelete').getAttribute('href');
-        let btnHtml = form.html();
-        let spinner = $("<span aria-hidden='true' class='spinner-border spinner-border-sm' role='status'></span>");
-        $.ajax({
-          beforeSend: function () {
-            form.text(' Loading. . .').prepend(spinner).prop("disabled", "disabled");
-          },
-          type: 'GET',
-          url: url,
-          dataType: 'json',
-          headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-          success: function (response) {
-           toastr.success(response.message, 'Success !');
-            form.text('Submit').html(btnHtml).removeAttr('disabled');
-            dataTable.draw();
-            bsDelete.hide();
-          },
-          error: function (response) {
-           toastr.error(response.responseJSON.message, 'Failed !');
-            form.text('Submit').html(btnHtml).removeAttr('disabled');
-            bsDelete.hide();
-          }
+        modalDelete.addEventListener('show.bs.modal', function (event) {
+            let button = event.relatedTarget;
+            let id = button.getAttribute('data-bs-id');
+            let url = button.getAttribute('data-bs-url');
+            this.querySelector('.urlDelete').setAttribute('href', url);
         });
-      });
-    // let dataTable = $('#Datatable').DataTable();
+        modalDelete.addEventListener('hidden.bs.modal', function (event) {
+            this.querySelector('.urlDelete').setAttribute('href', '');
+        });
+
+        $("#formDelete").click(function (e) {
+            e.preventDefault();
+            let form = $(this);
+            let url = modalDelete.querySelector('.urlDelete').getAttribute('href');
+            let btnHtml = form.html();
+            let spinner = $("<span aria-hidden='true' class='spinner-border spinner-border-sm' role='status'></span>");
+            $.ajax({
+            beforeSend: function () {
+                form.text(' Loading. . .').prepend(spinner).prop("disabled", "disabled");
+            },
+            type: 'GET',
+            url: url,
+            dataType: 'json',
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            success: function (response) {
+            toastr.success(response.message, 'Success !');
+                form.text('Submit').html(btnHtml).removeAttr('disabled');
+                dataTable.draw();
+                bsDelete.hide();
+            },
+            error: function (response) {
+            toastr.error(response.responseJSON.message, 'Failed !');
+                form.text('Submit').html(btnHtml).removeAttr('disabled');
+                bsDelete.hide();
+            }
+            });
+        });
     });
 </script>
 @endpush

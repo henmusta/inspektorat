@@ -9,6 +9,7 @@ use App\Models\PageMeta;
 use App\Models\PageSeo;
 use App\Models\User;
 use App\Rules\EditorEmptyCheckRule;
+use Yajra\DataTables\Facades\DataTables;
 use Storage;
 use Auth;
 
@@ -23,50 +24,36 @@ class PagesController extends Controller
 	/**
 	 * Display a listing of the resource.
 	 * @return Renderable
-	 * 
+	 *
 	 */
 	public function admin_index(Request $request)
 	{
 
 		$page_title = __('All Pages');
-		$pages_query = Page::query();
-
-		if($request->isMethod('get') && $request->input('todo') == 'Filter')
-		{
-			if($request->filled('title')) {
-				$pages_query->where('title', 'like', "%{$request->input('title')}%");
-			}
-
-			if($request->filled('status')) {
-				$pages_query->where('status', '=', $request->input('status'));
-			}
-
-			if($request->filled('from') && $request->filled('to')) {
-				$pages_query->whereBetween('created_at', [$request->input('from'), $request->input('to')]);
-			}
-		}
-		$pages_query->join('users', 'pages.user_id', '=', 'users.id');
-		$pages_query->select('pages.*','users.name as user_name');
-        $pages_query->where('status', '!=', 3);
-
-        $sortWith = $request->get('with') ? $request->get('with') : Null;
-		$sortBy = $request->get('sort') ? $request->get('sort') : 'created_at';
-        $direction = $request->get('direction') ? $request->get('direction') : 'desc';
-        
-        
-        if($sortWith == 'users')
-    	{
-			$pages_query->orderBy('users.'.$sortBy, $direction);
-    	}
-    	else
-    	{
-			$pages_query->orderBy('pages.'.$sortBy, $direction);
-    	}
 
 
-		$pages = $pages_query->paginate(config('Reading.nodes_per_page'));
-		$status = config('page.status');
-		return view('admin.pages.index', compact('pages','page_title', 'status'));
+        if ($request->ajax()) {
+            $data = Page::query();
+            $data->join('users', 'pages.user_id', '=', 'users.id');
+            $data->select('pages.*','users.name as user_name');
+            $data->where('status', '!=', 3);
+
+            return DataTables::of($data)
+              ->addColumn('action', function ($row) {
+                $edit = ' <a href="'.route('page.admin.edit', $row->id).'" class="btn btn-primary shadow btn-xs sharp me-1"><i class="fas fa-pencil-alt"></i></a>';
+                $delete = '    <a href="'. route('page.admin.admin_trash_status', $row->id) .'" class="btn btn-danger shadow btn-xs sharp me-1"><i class="fa fa-trash"></i></a>';
+
+              return '
+                    '.$edit.'
+                    '.$delete.'
+                ';
+            })
+
+             ->rawColumns(['action'])
+            ->make(true);
+        }
+
+		return view('admin.pages.index', compact('page_title'));
 	}
 
 	/**
@@ -104,7 +91,7 @@ class PagesController extends Controller
 		];
 
 		$this->validate($request, $validation, $validationMsg);
-		
+
 		$pageData = $request->input('data.Page');
 		$pageData['user_id'] = Auth::id();
 		$page       = Page::create($pageData);
@@ -125,7 +112,7 @@ class PagesController extends Controller
 							$pageMetaArr = ['title' => $page_meta['title'], 'value' => $fileName];
 							$page_meta['value'] = $fileName;
 						}
-					} else 
+					} else
 					{
 						$pageMetaArr = ['title' => $page_meta['title'], 'page_id'=>$page->id, 'value' => $page_meta['value']];
 					}
@@ -203,7 +190,7 @@ class PagesController extends Controller
 		{
 			$pageseo	= $page->page_seo()->update($request->input('data.PageSeo'));
 			if(!empty($page_metas))
-			{   
+			{
 				$pageMetaIds = array_column($page_metas, 'meta_id');
 				PageMeta::where('page_id', '=', $id)->whereNotIn('id', $pageMetaIds)->delete();
 
@@ -287,28 +274,32 @@ class PagesController extends Controller
 	public function trash_list(Request $request)
 	{
 		$page_title = 'Trashed Pages';
-		$pages_query = Page::query()->where('status','=', 3);
-
-		$pages_query->join('users', 'pages.user_id', '=', 'users.id');
-		$pages_query->select('pages.*','users.name as user_name');
-
-        $sortWith = $request->get('with') ? $request->get('with') : Null;
-		$sortBy = $request->get('sort') ? $request->get('sort') : 'created_at';
-        $direction = $request->get('direction') ? $request->get('direction') : 'desc';
-        
-        
-        if($sortWith == 'users')
-    	{
-			$pages_query->orderBy('users.'.$sortBy, $direction);
-    	}
-    	else
-    	{
-			$pages_query->orderBy('pages.'.$sortBy, $direction);
-    	}
 
 
-		$pages = $pages_query->paginate(config('Reading.nodes_per_page'));
-		return view('admin.pages.trashed_pages', compact('pages','page_title'));
+        if ($request->ajax()) {
+            $data = Page::query();
+            $data->join('users', 'pages.user_id', '=', 'users.id');
+            $data->select('pages.*','users.name as user_name');
+            $data->where('status', '=', 3);
+
+            return DataTables::of($data)
+              ->addColumn('action', function ($row) {
+                $edit = ' <a href="'.route('page.admin.edit', $row->id).'" class="btn btn-primary shadow btn-xs sharp me-1"><i class="fas fa-pencil-alt"></i></a>';
+                $delete   = '  <a href="#" data-bs-toggle="modal" data-bs-target="#modalDelete"
+                                data-bs-id="' . $row->id . '"
+                                data-bs-url="' . route('page.admin.destroy', $row->id) .'"
+                                class="btn btn-danger shadow btn-xs sharp me-1"><i class="fa fa-trash"></i></a>';
+              return '
+                    '.$edit.'
+                    '.$delete.'
+                ';
+            })
+
+             ->rawColumns(['action'])
+            ->make(true);
+        }
+
+		return view('admin.pages.trashed_pages', compact('page_title'));
 	}
 
 	public function remove_feature_image($id)
